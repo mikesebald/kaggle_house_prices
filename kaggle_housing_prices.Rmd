@@ -45,7 +45,7 @@ sapply(train, function(x) {sum(is.na(x))})
 train[factor_vars] <- lapply(train[factor_vars], factor)
 str(train)
 ```
-### Replacing  NAs with proper values
+### Replacing NAs with proper values
 ```{r}
 vals_fix_nas <- c("Alley", "BsmtQual", "BsmtCond", "BsmtExposure", 
                   "BsmtExposure", "BsmtFinType1", "BsmtFinType2",
@@ -53,8 +53,8 @@ vals_fix_nas <- c("Alley", "BsmtQual", "BsmtCond", "BsmtExposure",
                   "GarageCond", "PoolQC", "Fence", "MiscFeature")
 
 for (i in 1:length(vals_fix_nas)) {
-  levels(train[, vals_fix_nas[i]]) <- c(levels(train[, vals_fix_nas[i]]), "No")
-  train[is.na(train[vals_fix_nas[i]]), vals_fix_nas[i]] <- "No"
+  levels(train[, vals_fix_nas[i]]) <- c(levels(train[, vals_fix_nas[i]]), "None")
+  train[is.na(train[vals_fix_nas[i]]), vals_fix_nas[i]] <- "None"
 }
 ```
 
@@ -95,6 +95,3 @@ sapply(train, function(x) {length(unique(x))})
 * which variables should be transformed?
 * how do we treat dependant variables, e.g. BsmtFinType1 and BsmtFinSF1?
 * how do we consider variables which occur very seldom? Only 7 properties have a pool
-
-
-
