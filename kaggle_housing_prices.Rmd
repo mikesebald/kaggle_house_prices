@@ -58,7 +58,7 @@ for (i in 1:length(vals_fix_nas)) {
 }
 ```
 
-### Adjust levels - to be done
+### Adjust levels - to be done - not even sure this makes sense
 ```{r}
 levels(train$BsmtQual) <- c(10, 4, 8, 6, NA, 2)
 levels(train$BsmtCond) <- c()
