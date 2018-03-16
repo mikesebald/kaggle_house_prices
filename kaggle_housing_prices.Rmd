@@ -1,0 +1,100 @@
+---
+title: "Kaggle Housing Prices"
+author: "Michael Sebald"
+date: "12 März 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(magrittr))
+```
+
+## Training Set
+### Information from the data description
+```{r}
+factor_vars <- c("MSSubClass", "MSZoning", "Street", "Alley", "LotShape", 
+                 "LandContour", "Utilities", "LotConfig", "LandSlope",
+                 "Neighborhood", "Condition1", "Condition2", "BldgType",
+                 "HouseStyle", "RoofStyle", "RoofMatl", "Exterior1st",
+                 "Exterior2nd", "MasVnrType", "ExterQual", "ExterCond", 
+                 "Foundation", "BsmtQual", "BsmtCond", "BsmtExposure", 
+                 "BsmtFinType1", "BsmtFinType2", "Heating", "HeatingQC",
+                 "CentralAir", "Electrical", "KitchenQual", "Functional",
+                 "FireplaceQu", "GarageType", "GarageFinish", "GarageQual",
+                 "GarageCond", "PavedDrive", "PoolQC", "Fence", "MiscFeature", 
+                 "SaleType", "SaleCondition")
+                 
+factor_vars_2 <- c("OverallQual", "OverallCond")
+```
+
+### Input
+```{r}
+train <- read.csv("train.csv")
+dim(train)
+```
+
+### Number of NAs 
+```{r}
+sapply(train, function(x) {sum(is.na(x))})
+```
+
+### Convert into factors
+```{r}
+train[factor_vars] <- lapply(train[factor_vars], factor)
+str(train)
+```
+### Replacing  NAs with proper values
+```{r}
+vals_fix_nas <- c("Alley", "BsmtQual", "BsmtCond", "BsmtExposure", 
+                  "BsmtExposure", "BsmtFinType1", "BsmtFinType2",
+                  "FireplaceQu", "GarageType", "GarageFinish", "GarageQual",
+                  "GarageCond", "PoolQC", "Fence", "MiscFeature")
+
+for (i in 1:length(vals_fix_nas)) {
+  levels(train[, vals_fix_nas[i]]) <- c(levels(train[, vals_fix_nas[i]]), "No")
+  train[is.na(train[vals_fix_nas[i]]), vals_fix_nas[i]] <- "No"
+}
+```
+
+### Adjust levels - to be done
+```{r}
+levels(train$BsmtQual) <- c(10, 4, 8, 6, NA, 2)
+levels(train$BsmtCond) <- c()
+levels(train$FireplaceQu)
+levels(train$GarageQual)
+levels(train$GarageCond)
+
+levels(train$PoolQC)
+
+
+levels(train$ExterQual)
+levels(train$ExterCond)
+
+levels(train$HeatingQC) <- c(8, 2, 6, 0, 4)
+train$HeatingQC <- as.numeric(train$HeatingQC)
+
+levels(train$KitchenQual) <- c(8, 2, 6, 4, 0)
+train$KitchenQual <- as.numeric(train$KitchenQual)
+```
+
+### Number of unique values
+```{r}
+sapply(train, function(x) {length(unique(x))})
+```
+
+
+### Questions, observations, lessons learned
+
+* several numeric variables are actually categorial dimensions, so simply using strings_as_factors doesn't help
+* also, some numeric variables like _OverallQual_ are categorial but their numeric value seems to usable as is, so should we leave them as numeric?
+* not all possible factor levels exist in the training data set
+* several categorial variables indicate a "quality level" -> convert them into numeric values?
+* some dimensions occur twice, in two different columns. How to treat them?
+* which variables should be transformed?
+* how do we treat dependant variables, e.g. BsmtFinType1 and BsmtFinSF1?
+* how do we consider variables which occur very seldom? Only 7 properties have a pool
+
+
+
